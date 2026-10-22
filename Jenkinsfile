@@ -12,9 +12,19 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
+        stage('SonarQube Test'){
+            steps{
+                
+         withSonarQubeEnv('SonarQube') {
+             
+             sh "mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=petshop -Dsonar.projectName='Pet Shop'"
+           
+        }
+            }
+        }
         stage('Deploy to tomcat'){
             steps{
-                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'sandeepcred', path: '', url: 'http://13.203.213.139:8090/')], contextPath: 'app', war: '**/*.war'
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcatCred', path: '', url: 'http://13.201.190.182:8090/')], contextPath: 'app', war: '**/*.war'
             }
         }
        
